@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Clientes - Gestão Funerária</title>
+
+    <link rel="stylesheet" href="main.css" />
+  </head>
+
+  <body>
+    <header>
+      <h1>Sistema de Gestão Funerária</h1>
+      <p>Organização de clientes, falecidos e atendimentos</p>
+    </header>
+
+    <nav>
+      <a href="index.html">Início</a>
+      <a href="clientes.html">Clientes</a>
+      <a href="falecidos.html">Falecidos</a>
+      <a href="atendimentos.html">Atendimentos</a>
+    </nav>
+
+    <main>
+      <h2>Clientes</h2>
+      <form id="formCliente">
+        <label>Nome</label>
+        <br />
+        <input type="text" id="nomeCliente" required />
+        <br />
+        <br />
+        <label>Telefone</label>
+        <br />
+        <input type="text" id="telefoneCliente" required />
+        <br />
+        <br />
+        <label>E-mail</label>
+        <br />
+        <input type="email" id="emailCliente" />
+        <br />
+        <br />
+        <button type="submit">Cadastrar Cliente</button>
+      </form>
+      <br />
+      <br />
+      <br />
+      <br />
+      <h3>Clientes cadastrados</h3>
+      <input type="text" id="pesquisaCliente" placeholder="Pesquisar cliente" />
+      <div id="listaClientes"></div>
+    </main>
+
+    <script src="main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Falecidos - Gestão Funerária</title>
+    <link rel="stylesheet" href="main.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Sistema de Gestão Funerária</h1>
+      <p>Organização de clientes, falecidos e atendimentos</p>
+    </header>
+    <nav>
+      <a href="index.html">Início</a>
+      <a href="clientes.html">Clientes</a>
+      <a href="falecidos.html">Falecidos</a>
+      <a href="atendimentos.html">Atendimentos</a>
+    </nav>
+
+    <main>
+      <h2>Falecidos</h2>
+      <form id="formFalecido">
+        <label>Nome</label>
+        <br />
+        <input type="text" id="nomeFalecido" required />
+        <br />
+        <br />
+        <label>Data de nascimento</label>
+        <br />
+        <input type="date" id="nascimentoFalecido" required />
+        <br />
+        <br />
+        <label>Data de falecimento</label>
+        <br />
+        <input type="date" id="falecimentoFalecido" required />
+        <br />
+        <br />
+        <label>Cliente responsável</label>
+        <br />
+        <select id="clienteResponsavel" required>
+          <option value="">Selecione um cliente</option>
+        </select>
+        <br />
+        <br />
+        <label>Status</label>
+        <br />
+        <select id="statusFalecido">
+          <option>Ativo</option>
+          <option>Finalizado</option>
+        </select>
+        <br />
+        <br />
+        <button type="submit">Cadastrar Falecido</button>
+      </form>
+      <br />
+      <h3>Falecidos cadastrados</h3>
+      <div id="listaFalecidos"></div>
+    </main>
+
+    <script src="main.js"></script>
+  </body>
+</html>

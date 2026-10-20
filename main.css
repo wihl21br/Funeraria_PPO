@@ -1,0 +1,95 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial;
+    background-color: #f2f2f2;
+    color: #333;
+}
+header {
+    background-color: #37474f;
+    color: white;
+    text-align: center;
+    padding: 25px;
+}
+nav {
+    background-color: white;
+    padding: 15px;
+}
+nav a {
+    background-color: #455a64;
+    color: white;
+    padding: 10px 18px;
+    margin: 5px;
+    border-radius: 5px;
+}
+nav a:hover{
+    background-color: #f10000;
+}
+main {
+    max-width: 1000px;
+    margin: 30px auto;
+    background-color: white;
+    padding: 25px;
+}
+h2 {
+    color: #37474f;
+}
+
+input,label,
+select,textarea {
+    padding: 10px;
+    border: 1px solid #bbb;
+    border-radius: 5px;
+    width: 700px;
+}
+
+form button {
+    background-color: #455a64;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+form button:hover {
+    background-color: #d30d0d;
+}
+
+
+
+.cards {
+    display: flex;
+    gap: 20px;
+}
+
+.card {
+    flex: 1;
+    background-color: #eceff1;
+    padding: 20px;
+    text-align: center;
+    border-radius: 8px;
+}
+
+.card p {
+    font-size: 30px;
+    font-weight: bold;
+}
+.caixa {
+    background-color: #f5f5f5;
+    padding: 20px;
+    margin-top: 25px;
+    border-radius: 10px;
+}
+.excluir {
+    background-color: #c62828;
+    color: white;
+}
+.relatorio {
+    background-color: #546e7a;
+    color: white;
+}

@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Atendimentos - Gestão Funerária</title>
+    <link rel="stylesheet" href="main.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Sistema de Gestão Funerária</h1>
+      <p>Organização de clientes, falecidos e atendimentos</p>
+    </header>
+    <nav>
+      <a href="index.html">Início</a>
+      <a href="clientes.html">Clientes</a>
+      <a href="falecidos.html">Falecidos</a>
+      <a href="atendimentos.html">Atendimentos</a>
+    </nav>
+    <main>
+      <h2>Atendimentos</h2>
+      <form id="formAtendimento">
+        <label>Cliente</label>
+        <br />
+        <select id="clienteAtendimento" required>
+          <option value="">Selecione um cliente</option>
+        </select>
+        <br />
+        <br />
+        <label>Falecido</label>
+        <br />
+        <select id="falecidoAtendimento" required>
+          <option value="">Selecione um falecido</option>
+        </select>
+        <br />
+        <br />
+        <label>Serviço</label>
+        <br />
+        <input type="text" id="servico" required />
+        <br />
+        <br />
+        <label>Data</label>
+        <br />
+        <input type="date" id="dataAtendimento" required />
+        <br />
+        <br />
+        <label>Horário</label>
+        <br />
+        <input type="time" id="horaAtendimento" required />
+        <br />
+        <br />
+        <label>Status</label>
+        <br />
+        <select id="statusAtendimento">
+          <option>Em andamento</option>
+          <option>Concluído</option>
+          <option>Cancelado</option>
+        </select>
+        <br />
+        <br />
+        <label>Observação</label>
+        <br />
+        <textarea id="observacao"></textarea>
+        <br />
+        <br />
+        <button type="submit">Registrar Atendimento</button>
+      </form>
+      <br />
+      <br />
+      <h3>Atendimentos cadastrados</h3>
+      <div id="listaAtendimentos"></div>
+    </main>
+    <script src="main.js"></script>
+  </body>
+</html>
