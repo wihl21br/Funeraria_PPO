@@ -1,324 +1,212 @@
-let clientes = JSON.parse(localStorage.getItem("clientes")) || [];
-let falecidos = JSON.parse(localStorage.getItem("falecidos")) || [];
-let atendimentos = JSON.parse(localStorage.getItem("atendimentos")) || [];
+let clientes = [];
+let falecidos = [];
+let atendimentos = [];
+let editando = 0;
 
-let idCliente = Number(localStorage.getItem("idCliente")) || 1;
-let idFalecido = Number(localStorage.getItem("idFalecido")) || 1;
-let idAtendimento = Number(localStorage.getItem("idAtendimento")) || 1;
-
-function salvar() {
-  localStorage.setItem("clientes", JSON.stringify(clientes));
-  localStorage.setItem("falecidos", JSON.stringify(falecidos));
-  localStorage.setItem("atendimentos", JSON.stringify(atendimentos));
-  localStorage.setItem("idCliente", idCliente);
-  localStorage.setItem("idFalecido", idFalecido);
-  localStorage.setItem("idAtendimento", idAtendimento);
+function pegar(id) {
+    return document.getElementById(id);
+}
+function buscarNome(lista, id) {
+    for (let item of lista) {
+        if (item.id == id) return item.nome;
+    }
+    return "Não encontrado";
 }
 
-if (document.getElementById("formCliente")) {
-  document.getElementById("formCliente").addEventListener("submit", function (event) {
-      event.preventDefault();
-      let cliente = {
-        id: idCliente,
-        nome: document.getElementById("nomeCliente").value,
-        telefone: document.getElementById("telefoneCliente").value,
-        email: document.getElementById("emailCliente").value,
-      };
+async function carregar() {
+    clientes = await (await fetch("/api/clientes")).json();
+    falecidos = await (await fetch("/api/falecidos")).json();
+    atendimentos = await (await fetch("/api/atendimentos")).json();
 
-      clientes.push(cliente);
-      idCliente++;
-      salvar();
+    if (pegar("totalClientes")) {
+        pegar("totalClientes").textContent = clientes.length;
+        pegar("totalFalecidos").textContent = falecidos.length;
+        pegar("totalAtendimentos").textContent = atendimentos.length;
+    }
+    atualizarOpcoes();
+    mostrar();
+}
 
-      document.getElementById("formCliente").reset();
-      mostrarClientes();
+function atualizarOpcoes() {
+    let select = pegar("clienteResponsavel") || pegar("clienteAtendimento");
+    if (select) {
+        let selecionado = select.value;
+        select.innerHTML = '<option value="">Selecione um cliente</option>';
+        for (let cliente of clientes) {
+            select.innerHTML += `<option value="${cliente.id}">${proteger(cliente.nome)}</option>`;
+        }
+        select.value = selecionado;
+    }
+    let falecidoSelect = pegar("falecidoAtendimento");
+    if (falecidoSelect) {
+        let selecionado = falecidoSelect.value;
+        falecidoSelect.innerHTML = '<option value="">Selecione um falecido</option>';
+        for (let falecido of falecidos) {
+            if (falecido.cliente == pegar("clienteAtendimento").value) {
+                falecidoSelect.innerHTML += `<option value="${falecido.id}">${proteger(falecido.nome)}</option>`;
+            }
+        }
+        falecidoSelect.value = selecionado;
+    }
+}
+
+function botoes(tipo, id) {
+    return `<button onclick="editar('${tipo}', ${id})">Editar</button>
+            <button class="excluir" onclick="excluir('${tipo}', ${id})">Excluir</button>`;
+}
+function mostrar() {
+    if (pegar("listaClientes")) {
+        let pesquisa = pegar("pesquisaCliente").value.toLowerCase();
+        pegar("listaClientes").innerHTML = "";
+        for (let c of clientes) {
+            if (c.nome.toLowerCase().includes(pesquisa)) {
+                pegar("listaClientes").innerHTML += `<div class="registro">
+                    <h3>${proteger(c.nome)}</h3><p>Telefone: ${proteger(c.telefone)}</p>
+                    <p>E-mail: ${proteger(c.email)}</p>
+                    <button class="relatorio" onclick="relatorio(${c.id})">Relatório</button>
+                    ${botoes("clientes", c.id)}</div>`;
+            }
+        }
+    }
+    if (pegar("listaFalecidos")) {
+        pegar("listaFalecidos").innerHTML = "";
+        for (let f of falecidos) {
+            pegar("listaFalecidos").innerHTML += `<div class="registro">
+                <h3>${proteger(f.nome)}</h3><p>Nascimento: ${proteger(f.nascimento)}</p>
+                <p>Falecimento: ${proteger(f.falecimento)}</p>
+                <p>Cliente: ${proteger(buscarNome(clientes, f.cliente))}</p>
+                <p>Status: ${proteger(f.status)}</p>${botoes("falecidos", f.id)}</div>`;
+        }
+    }
+    if (pegar("listaAtendimentos")) {
+        pegar("listaAtendimentos").innerHTML = "";
+        for (let a of atendimentos) {
+            pegar("listaAtendimentos").innerHTML += `<div class="registro">
+                <h3>${proteger(a.servico)}</h3>
+                <p>Cliente: ${proteger(buscarNome(clientes, a.cliente))}</p>
+                <p>Falecido: ${proteger(buscarNome(falecidos, a.falecido))}</p>
+                <p>Data: ${proteger(a.data)} - ${proteger(a.hora)}</p>
+                <p>Status: ${proteger(a.status)}</p>
+                <p>Observação: ${proteger(a.observacao)}</p>
+                ${botoes("atendimentos", a.id)}</div>`;
+        }
+    }
+}
+
+async function enviar(tipo, dados) {
+    let endereco = "/api/" + tipo;
+    let metodo = "POST";
+    if (editando) {
+        endereco += "/" + editando;
+        metodo = "PUT";
+    }
+    let resposta = await fetch(endereco, {
+        method: metodo,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(dados)
     });
-
-  document.getElementById("pesquisaCliente").addEventListener("keyup", mostrarClientes);
-  mostrarClientes();
-}
-
-function mostrarClientes() {
-  if (!document.getElementById("listaClientes")) {
-    return;
-  }
-
-  let lista = document.getElementById("listaClientes");
-  let pesquisa = document.getElementById("pesquisaCliente").value.toLowerCase();
-
-  lista.innerHTML = "";
-
-  for (let i = 0; i < clientes.length; i++) {
-    if (clientes[i].nome.toLowerCase().includes(pesquisa)) {
-      lista.innerHTML += `
-                <div class="registro">
-                    <h3>${clientes[i].nome}</h3>
-                    <p>Telefone: ${clientes[i].telefone}</p>
-                    <p>E-mail: ${clientes[i].email}</p>
-                    <button class="relatorio" onclick="relatorioCliente(${clientes[i].id})">
-                        Relatório
-                    </button>
-                    <button class="excluir" onclick="excluirCliente(${clientes[i].id})">
-                        Excluir
-                    </button>
-
-                </div>
-            `;
+    let resultado = await resposta.json();
+    alert(resultado.mensagem || resultado.erro);
+    if (resposta.ok) {
+        editando = 0;
+        document.querySelector("form").reset();
+        await carregar();
     }
-  }
 }
 
-function excluirCliente(id) {
-  if (confirm("Deseja excluir este cliente?")) {
-    for (let i = 0; i < clientes.length; i++) {
-      if (clientes[i].id == id) {
-        clientes.splice(i, 1);
+async function excluir(tipo, id) {
+    if (!confirm("Deseja excluir este registro?")) return;
+    let resposta = await fetch("/api/" + tipo + "/" + id, { method: "DELETE" });
+    let resultado = await resposta.json();
+    alert(resultado.mensagem || resultado.erro);
+    await carregar();
+}
 
-        break;
-      }
+function editar(tipo, id) {
+    let lista = tipo == "clientes" ? clientes : tipo == "falecidos" ? falecidos : atendimentos;
+    let item = lista.find(registro => registro.id == id);
+    if (!item) return;
+    editando = id;
+    if (tipo == "clientes") {
+        pegar("nomeCliente").value = item.nome;
+        pegar("telefoneCliente").value = item.telefone;
+        pegar("emailCliente").value = item.email;
     }
-    salvar();
-    mostrarClientes();
-  }
+    if (tipo == "falecidos") {
+        pegar("nomeFalecido").value = item.nome;
+        pegar("nascimentoFalecido").value = item.nascimento;
+        pegar("falecimentoFalecido").value = item.falecimento;
+        pegar("clienteResponsavel").value = item.cliente;
+        pegar("statusFalecido").value = item.status;
+    }
+    if (tipo == "atendimentos") {
+        pegar("clienteAtendimento").value = item.cliente;
+        atualizarOpcoes();
+        pegar("falecidoAtendimento").value = item.falecido;
+        pegar("servico").value = item.servico;
+        pegar("dataAtendimento").value = item.data;
+        pegar("horaAtendimento").value = item.hora;
+        pegar("statusAtendimento").value = item.status;
+        pegar("observacao").value = item.observacao;
+    }
+    document.querySelector("form button").textContent = "Salvar alteração";
+    window.scrollTo(0, 0);
 }
 
-if (document.getElementById("formFalecido")) {
-  atualizarClientes();
+function relatorio(id) {
+    let cliente = clientes.find(c => c.id == id);
+    if (!cliente) return;
+    let texto = "RELATÓRIO DO CLIENTE\n\n";
+    texto += "Nome: " + cliente.nome + "\nTelefone: " + cliente.telefone + "\nE-mail: " + cliente.email + "\n";
+    texto += "\nFALECIDOS\n";
+    for (let f of falecidos) {
+        if (f.cliente == id) texto += f.nome + " | " + f.nascimento + " | " + f.falecimento + " | " + f.status + "\n";
+    }
+    texto += "\nATENDIMENTOS\n";
+    for (let a of atendimentos) {
+        if (a.cliente == id) texto += a.servico + " | " + buscarNome(falecidos, a.falecido) + " | " + a.data + " " + a.hora + " | " + a.status + " | " + a.observacao + "\n";
+    }
+    alert(texto);
+}
 
-  document.getElementById("formFalecido").addEventListener("submit", function (event) {
-      event.preventDefault();
-      let falecido = {
-        id: idFalecido,
-        nome: document.getElementById("nomeFalecido").value,
-        nascimento: document.getElementById("nascimentoFalecido").value,
-        falecimento: document.getElementById("falecimentoFalecido").value,
-        cliente: document.getElementById("clienteResponsavel").value,
-        status: document.getElementById("statusFalecido").value,
-      };
-
-      falecidos.push(falecido);
-      idFalecido++;
-      salvar();
-      document.getElementById("formFalecido").reset();
-      mostrarFalecidos();
+if (pegar("formCliente")) {
+    pegar("formCliente").addEventListener("submit", function(event) {
+        event.preventDefault();
+        enviar("clientes", {
+            nome: pegar("nomeCliente").value,
+            telefone: pegar("telefoneCliente").value,
+            email: pegar("emailCliente").value
+        });
     });
-  mostrarFalecidos();
+    pegar("pesquisaCliente").addEventListener("input", mostrar);
 }
 
-
-function atualizarClientes() {
-  let select = document.getElementById("clienteResponsavel");
-
-  if (!select) {
-    select = document.getElementById("clienteAtendimento");
-  }
-
-  if (!select) {
-    return;
-  }
-
-  select.innerHTML = '<option value="">Selecione um cliente</option>';
-
-  for (let i = 0; i < clientes.length; i++) {
-    select.innerHTML += `
-      <option value="${clientes[i].id}">
-        ${clientes[i].nome}
-      </option>
-    `;
-  }
-}
-
-
-function mostrarFalecidos() {
-  if (!document.getElementById("listaFalecidos")) {
-    return;
-  }
-
-  let lista = document.getElementById("listaFalecidos");
-  lista.innerHTML = "";
-  for (let i = 0; i < falecidos.length; i++) {
-    let nomeCliente = "";
-
-    for (let j = 0; j < clientes.length; j++) {
-      if (clientes[j].id == falecidos[i].cliente) {
-        nomeCliente = clientes[j].nome;
-      }
-    }
-
-    lista.innerHTML += `
-            <div class="registro">
-                <h3>${falecidos[i].nome}</h3>
-                <p>Nascimento: ${falecidos[i].nascimento}</p>
-                <p>Falecimento: ${falecidos[i].falecimento}</p>
-                <p>Cliente: ${nomeCliente}</p>
-                <p>Status: ${falecidos[i].status}</p>
-                <button class="excluir" onclick="excluirFalecido(${falecidos[i].id})">
-                    Excluir
-                </button>
-
-            </div>
-        `;
-  }
-}
-
-function excluirFalecido(id) {
-  if (confirm("Deseja excluir este registro?")) {
-    for (let i = 0; i < falecidos.length; i++) {
-      if (falecidos[i].id == id) {
-        falecidos.splice(i, 1);
-        break;
-      }
-    }
-    salvar();
-    mostrarFalecidos();
-  }
-}
-
-if (document.getElementById("formAtendimento")) {
-  atualizarClientes();
-  atualizarFalecidos();
-
-  document.getElementById("formAtendimento").addEventListener("submit", function (event) {
-      event.preventDefault();
-
-      let atendimento = {
-        id: idAtendimento,
-        cliente: document.getElementById("clienteAtendimento").value,
-        falecido: document.getElementById("falecidoAtendimento").value,
-        servico: document.getElementById("servico").value,
-        data: document.getElementById("dataAtendimento").value,
-        hora: document.getElementById("horaAtendimento").value,
-        status: document.getElementById("statusAtendimento").value,
-        observacao: document.getElementById("observacao").value,
-      };
-
-      atendimentos.push(atendimento);
-      idAtendimento++;
-      salvar();
-
-      document.getElementById("formAtendimento").reset();
-      mostrarAtendimentos();
+if (pegar("formFalecido")) {
+    pegar("formFalecido").addEventListener("submit", function(event) {
+        event.preventDefault();
+        enviar("falecidos", {
+            nome: pegar("nomeFalecido").value,
+            nascimento: pegar("nascimentoFalecido").value,
+            falecimento: pegar("falecimentoFalecido").value,
+            cliente: pegar("clienteResponsavel").value,
+            status: pegar("statusFalecido").value
+        });
     });
-  mostrarAtendimentos();
+}
+if (pegar("formAtendimento")) {
+    pegar("clienteAtendimento").addEventListener("change", atualizarOpcoes);
+    pegar("formAtendimento").addEventListener("submit", function(event) {
+        event.preventDefault();
+        enviar("atendimentos", {
+            cliente: pegar("clienteAtendimento").value,
+            falecido: pegar("falecidoAtendimento").value,
+            servico: pegar("servico").value,
+            data: pegar("dataAtendimento").value,
+            hora: pegar("horaAtendimento").value,
+            status: pegar("statusAtendimento").value,
+            observacao: pegar("observacao").value
+        });
+    });
 }
 
-function atualizarFalecidos() {
-  let select = document.getElementById("falecidoAtendimento");
-
-  if (!select) {
-    return;
-  }
-
-  select.innerHTML = '<option value="">Selecione um falecido</option>';
-  for (let i = 0; i < falecidos.length; i++) {
-    select.innerHTML += `
-            <option value="${falecidos[i].id}">
-                ${falecidos[i].nome}
-            </option>
-        `;
-  }
-}
-
-function mostrarAtendimentos() {
-  if (!document.getElementById("listaAtendimentos")) {
-    return;
-  }
-
-  let lista = document.getElementById("listaAtendimentos");
-  lista.innerHTML = "";
-
-  for (let i = 0; i < atendimentos.length; i++) {
-    let nomeCliente = "";
-    let nomeFalecido = "";
-
-    for (let j = 0; j < clientes.length; j++) {
-      if (clientes[j].id == atendimentos[i].cliente) {
-        nomeCliente = clientes[j].nome;
-      }
-    }
-
-    for (let j = 0; j < falecidos.length; j++) {
-      if (falecidos[j].id == atendimentos[i].falecido) {
-        nomeFalecido = falecidos[j].nome;
-      }
-    }
-
-    lista.innerHTML += `
-            <div class="registro">
-
-                <h3>${atendimentos[i].servico}</h3>
-
-                <p>Cliente: ${nomeCliente}</p>
-
-                <p>Falecido: ${nomeFalecido}</p>
-
-                <p>Data: ${atendimentos[i].data}</p>
-
-                <p>Horário: ${atendimentos[i].hora}</p>
-
-                <p>Status: ${atendimentos[i].status}</p>
-
-                <p>Observação: ${atendimentos[i].observacao}</p>
-
-                <button class="excluir" onclick="excluirAtendimento(${atendimentos[i].id})">
-                    Excluir
-                </button>
-
-            </div>
-        `;
-  }
-}
-
-function excluirAtendimento(id) {
-  if (confirm("Deseja excluir este atendimento?")) {
-    for (let i = 0; i < atendimentos.length; i++) {
-      if (atendimentos[i].id == id) {
-        atendimentos.splice(i, 1);
-
-        break;
-      }
-    }
-
-    salvar();
-
-    mostrarAtendimentos();
-  }
-}
-
-function relatorioCliente(id) {
-  let cliente;
-
-  for (let i = 0; i < clientes.length; i++) {
-    if (clientes[i].id == id) {
-      cliente = clientes[i];
-    }
-  }
-
-  let texto = "";
-  texto += "RELATÓRIO DO CLIENTE\n\n";
-  texto += "Nome: " + cliente.nome + "\n";
-  texto += "Telefone: " + cliente.telefone + "\n";
-  texto += "E-mail: " + cliente.email + "\n\n";
-
-  texto += "FALECIDO:\n";
-  for (let i = 0; i < falecidos.length; i++) {
-    if (falecidos[i].cliente == id) {
-      texto += "- " + falecidos[i].nome + "\n";
-    }
-  }
-
-  texto += "\nATENDIMENTOS:\n";
-
-  for (let i = 0; i < atendimentos.length; i++) {
-    if (atendimentos[i].cliente == id) {
-      texto +=
-        "- " + atendimentos[i].servico + " - " + atendimentos[i].status + "\n";
-    }
-  }
-
-  alert(texto);
-}
-if (document.getElementById("totalClientes")) {
-  document.getElementById("totalClientes").innerText = clientes.length;
-  document.getElementById("totalFalecidos").innerText = falecidos.length;
-  document.getElementById("totalAtendimentos").innerText = atendimentos.length;
-}
+carregar();

@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Atendimentos - Gestão Funerária</title>
+    <link rel="stylesheet" href="main.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Sistema de Gestão Funerária</h1>
+      <p>Organização de clientes, falecidos e atendimentos</p>
+    </header>
+    <nav>
+      <a href="index.html">Voltar para o Início</a>
+      <a href="clientes.html">Cadastrar Cliente</a>
+      <a href="falecidos.html">Cadastrar Falecido</a>
+    </nav>
+    <main>
+      <h2>Atendimentos</h2>
+      <form id="formAtendimento">
+
+        <label>Cliente</label>    
+        <select id="clienteAtendimento" required>
+          <option value="">Selecione um cliente</option>
+        </select>
+
+        <label>Falecido</label>
+
+        <select id="falecidoAtendimento" required>
+          <option value="">Selecione um falecido</option>
+        </select>
+
+        <label>Serviço</label>
+        <input type="text" id="servico" required />
+        <label>Data</label>
+        <input type="date" id="dataAtendimento" required />
+        <label>Horário</label>
+        <input type="time" id="horaAtendimento" required />
+        <label>Status</label>
+
+        <select id="statusAtendimento">
+          <option>Em andamento</option>
+          <option>Concluído</option>
+          <option>Cancelado</option>
+        </select>
+
+        <label>Observação</label>
+        <textarea id="observacao"></textarea>
+        <button type="submit">Registrar Atendimento</button>
+      </form>      
+
+      <h3>Atendimentos cadastrados</h3>
+      <div id="listaAtendimentos"></div>
+    </main>
+    <script src="main.js"></script>
+  </body>
+</html>

@@ -1,95 +1,105 @@
-* {
-    box-sizing: border-box;
-}
-
 body {
-    margin: 0;
-    font-family: Arial;
-    background-color: #f2f2f2;
-    color: #333;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f2f2f2;
+  color: #333;
 }
 header {
-    background-color: #37474f;
-    color: white;
-    text-align: center;
-    padding: 25px;
+  background: #37474f;
+  color: white;
+  text-align: center;
+  padding: 25px;
 }
 nav {
-    background-color: white;
-    padding: 15px;
+  background: white;
+  text-align: center;
+  padding: 15px;
 }
 nav a {
-    background-color: #455a64;
-    color: white;
-    padding: 10px 18px;
-    margin: 5px;
-    border-radius: 5px;
+  display: inline-block;
+  background: #455a64;
+  color: white;
+  text-decoration: none;
+  padding: 12px;
+  margin: 5px;
+  border-radius: 5px;
 }
-nav a:hover{
-    background-color: #f10000;
+nav a:hover {
+  background: #263238;
 }
 main {
-    max-width: 1000px;
-    margin: 30px auto;
-    background-color: white;
-    padding: 25px;
+  width: 90%;
+  max-width: 1000px;
+  margin: 30px auto;
+  background: white;
+  padding: 25px;
+  border-radius: 8px;
 }
 h2 {
-    color: #37474f;
+  color: #37474f;
 }
-
-input,label,
-select,textarea {
-    padding: 10px;
-    border: 1px solid #bbb;
-    border-radius: 5px;
-    width: 700px;
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 30px;
 }
-
-form button {
-    background-color: #455a64;
-    color: white;
-    border: none;
-    padding: 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 10px;
+input,
+select,
+textarea {
+  width: 100%;
+  max-width: 700px;
+  padding: 10px;
+  border: 1px solid #bbb;
+  border-radius: 5px;
 }
-
-form button:hover {
-    background-color: #d30d0d;
+button {
+  background: #455a64;
+  color: white;
+  border: none;
+  padding: 10px;
+  margin: 5px 5px 5px 0;
+  border-radius: 5px;
+  cursor: pointer;
 }
-
-
-
+button:hover {
+  background: #263238;
+}
 .cards {
-    display: flex;
-    gap: 20px;
+  display: flex;
+  gap: 20px;
 }
-
 .card {
-    flex: 1;
-    background-color: #eceff1;
-    padding: 20px;
-    text-align: center;
-    border-radius: 8px;
+  flex: 1;
+  background: #eceff1;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
 }
-
 .card p {
-    font-size: 30px;
-    font-weight: bold;
+  font-size: 30px;
+  font-weight: bold;
 }
-.caixa {
-    background-color: #f5f5f5;
-    padding: 20px;
-    margin-top: 25px;
-    border-radius: 10px;
+.caixa,
+.registro {
+  background: #f7f7f7;
+  border: 1px solid #ddd;
+  padding: 15px;
+  margin-top: 15px;
+  border-radius: 7px;
 }
 .excluir {
-    background-color: #c62828;
-    color: white;
+  background: #b71c1c;
 }
 .relatorio {
-    background-color: #546e7a;
-    color: white;
+  background: #546e7a;
+}
+@media (max-width: 700px) {
+  .cards {
+    flex-direction: column;
+  }
+  main {
+    width: 95%;
+    padding: 15px;
+  }
 }
