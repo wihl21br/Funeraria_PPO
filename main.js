@@ -274,7 +274,7 @@ function gerarRelatorio(id) {
     alert(texto);
 }
 
-
+// Formulario - Clientes
 
 if (pegar("formCliente")) {
     pegar("formCliente").addEventListener("submit", function(event) {
@@ -290,6 +290,7 @@ if (pegar("formCliente")) {
     pegar("pesquisaCliente").addEventListener("input", mostrar);
 }
 
+// Formulario - Falecido
 
 if (pegar("formFalecido")) {
     pegar("formFalecido").addEventListener("submit", function(event) {
@@ -305,6 +306,7 @@ if (pegar("formFalecido")) {
     });
 }
 
+// Formulario - Atendimentos
 
 if (pegar("formAtendimento")) {
     pegar("clienteAtendimento").addEventListener("change", atualizarOpcoes);

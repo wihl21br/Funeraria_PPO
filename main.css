@@ -106,3 +106,35 @@ button:hover {
 #Falecidos, #Clientes, #Atendimentos{
   background-color: #afc2bf;
 }
+#pai {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+    align-items: start;
+}
+
+.filho-1,
+.filho-2 {
+    background-color: white;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.filho-1 form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.filho-1 input,
+.filho-1 select {
+    width: 100%;
+}
+
+#listaFalecidos {
+    margin-top: 15px;
+}
+.filho-2{
+  background-color: rgb(201, 201, 211);
+}
