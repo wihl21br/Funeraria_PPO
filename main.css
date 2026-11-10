@@ -103,3 +103,6 @@ button:hover {
     padding: 15px;
   }
 }
+#Falecidos, #Clientes, #Atendimentos{
+  background-color: #afc2bf;
+}
